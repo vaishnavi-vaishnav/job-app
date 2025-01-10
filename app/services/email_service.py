@@ -21,7 +21,7 @@ def send_application_emails(job_title: str, candidate_email: str, recruiter_emai
 
     # Send email to recruiter
     recruiter_message = emails.Message(
-        subject=f'New Job Application - {job_title}',
+        subject=f'New Job Application Received - {job_title}',
         html=f'<p>A new application has been received for the position of {job_title}.</p>',
         mail_from=settings.smtp_username
     )

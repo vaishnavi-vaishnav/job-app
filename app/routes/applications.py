@@ -35,12 +35,21 @@ async def apply_to_job(
     }
     await request.app.mongodb["applications"].insert_one(application)
     
+       
+    # Get recruiter details and send emails
+    # recruiter = await request.app.mongodb["users"].find_one({"_id": job["recruiter_id"]})
+    # send_application_emails(job["title"], user["email"], recruiter["email"])
+
     # Get recruiter details and send emails
     recruiter = await request.app.mongodb["users"].find_one({"_id": job["recruiter_id"]})
-    # send_application_emails(job["title"], user["email"], recruiter["email"])
+    candidate = await request.app.mongodb["users"].find_one({"_id": current_user})
+ 
+    # Send application emails
+    send_application_emails(job["title"], candidate["email"], recruiter["email"])
     
     return {"message": "Application submitted successfully"}
 
+# Candidate can see all jobs they've applied for
 @router.get("/my-applications")
 async def get_my_applications(request: Request, current_user: str = Depends(get_current_candidate)):
     applications = []
@@ -48,11 +57,12 @@ async def get_my_applications(request: Request, current_user: str = Depends(get_
     async for application in cursor:
         job = await request.app.mongodb["jobs"].find_one({"_id": application["job_id"]})
         applications.append({
-            "application": application,
+            # "application": application,
             "job": job
         })
     return applications
 
+# Recruiter an see all the applications for a job
 @router.get("/job-applications/{job_id}")
 async def get_job_applications(
     request: Request,

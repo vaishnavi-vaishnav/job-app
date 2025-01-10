@@ -1,4 +1,11 @@
-from pydantic import BaseSettings
+# from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
+from dotenv import load_dotenv
+
+
+# Load .env file
+load_dotenv()
+
 
 class Settings(BaseSettings):
     mongodb_url: str
@@ -11,5 +18,5 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
-
+    
 settings = Settings() 
